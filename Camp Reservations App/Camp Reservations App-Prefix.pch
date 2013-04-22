@@ -4,6 +4,12 @@
 
 #import <Availability.h>
 
+#define kBaseDataPath @"http://goshen.alwaysdata.net/goshen/"
+#define darkBrown [UIColor colorWithRed:(67/255.0) green:(40/255.0) blue:(18/255.0) alpha:1.0]
+#define lightBrown [UIColor colorWithRed:(90/255.0) green:(52/255.0) blue:(30/255.0) alpha:1.0]
+#define mediumBlue [UIColor colorWithRed:(127/255.0) green:(167/255.0) blue:(247/255.0) alpha:1.0]
+#define lightBlue [UIColor colorWithRed:(178/255.0) green:(202/255.0) blue:(247/255.0) alpha:1.0]
+
 #ifndef __IPHONE_3_0
 #warning "This project uses features only available in iOS SDK 3.0 and later."
 #endif

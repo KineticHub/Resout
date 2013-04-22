@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>title</key>
+		<string>Camping Equipment</string>
+		<key>completed</key>
+		<false/>
+		<key>description</key>
+		<string>Make sure to go through the scouting checklist of equipment to bring. A scout should be prepared!</string>
+		<key>importance</key>
+		<integer>2</integer>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>Choose Merit Badges</string>
+		<key>completed</key>
+		<false/>
+		<key>description</key>
+		<string>Look through the merit badges and choose the ones you think would be the most interesting!</string>
+		<key>importance</key>
+		<integer>2</integer>
+	</dict>
+</array>
+</plist>
