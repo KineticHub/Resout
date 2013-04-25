@@ -1,9 +1,8 @@
 //
-//  hmac.h
-//  OAuthConsumer
+//  NSString+URLEncoding.h
 //
-//  Created by Jonathan Wight on 4/8/8.
-//  Copyright 2008 Jonathan Wight. All rights reserved.
+//  Created by Jon Crosby on 10/19/07.
+//  Copyright 2007 Kaboomerang LLC. All rights reserved.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +22,14 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#ifndef HMAC_H
-#define HMAC_H 1
 
-extern void hmac_sha1(const unsigned char *inText, int inTextLength, unsigned char* inKey, const unsigned int inKeyLength, unsigned char *outDigest);
+#import <Foundation/Foundation.h>
 
-#endif /* HMAC_H */
+
+@interface NSString (OAURLEncodingAdditions)
+
+- (NSString *)encodedURLString;
+- (NSString *)encodedURLParameterString;
+- (NSString *)decodedURLString;
+- (NSString *)removeQuotes;
+@end

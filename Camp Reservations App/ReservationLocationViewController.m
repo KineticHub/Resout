@@ -8,6 +8,8 @@
 
 #import "ReservationLocationViewController.h"
 #import "QBFlatButton.h"
+#import "DataHandler.h"
+#import "MBProgressHUD.h"
 
 @interface ReservationLocationViewController ()
 @property (nonatomic, strong) NSDictionary *reservation;
@@ -20,9 +22,25 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    self.view.backgroundColor = [UIColor colorWithRed:(178/255.0) green:(199/255.0) blue:(250/255.0) alpha:1.0];
     self.locationManager = [[CLLocationManager alloc] init];
     
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        [[DataHandler sharedInstance] loadReservationData:^(NSError *error)
+         {
+             self.reservation = [DataHandler sharedInstance].reservationInfo;
+             NSLog(@"reservation: %@", self.reservation);
+             [self setupView];
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [MBProgressHUD hideHUDForView:self.view animated:YES];
+             });
+         }];
+    });
+}
+
+-(void)setupView
+{
     CGFloat y = 10.0;
     CGFloat spacer = 10.0;
     CGFloat edgeInset = 10.0;
@@ -31,7 +49,7 @@
     
     UIImageView *areaImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height/2 - 54.0)];
     [areaImageView setImage:[UIImage imageNamed:@"goshen_forest.jpg"]];
-    [self.view addSubview:areaImageView];
+    //    [self.view addSubview:areaImageView];
     
     self.mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height/2 - 54.0)];
     [self.view addSubview:self.mapView];
@@ -50,14 +68,17 @@
     [resName setUserInteractionEnabled:NO];
     [self.view addSubview:resName];
     
-    UIView *descriptionBackground = [[UIView alloc] initWithFrame:CGRectMake(0.0, CGRectGetMaxY(areaImageView.frame) + 10.0, fieldWidth + 10.0, fieldHeight*4)];
-    [descriptionBackground setBackgroundColor:[UIColor colorWithRed:(127/255.0) green:(167/255.0) blue:(247/255.0) alpha:0.4]];
+    //    UIView *descriptionBackground = [[UIView alloc] initWithFrame:CGRectMake(0.0, CGRectGetMaxY(areaImageView.frame) + 10.0, fieldWidth + 10.0, fieldHeight*4)];
+    //    [descriptionBackground setBackgroundColor:[UIColor colorWithRed:(127/255.0) green:(167/255.0) blue:(247/255.0) alpha:0.4]];
+    UIView *descriptionBackground = [[UIView alloc] initWithFrame:CGRectMake(0.0, CGRectGetMaxY(areaImageView.frame) + 15.0, self.view.frame.size.width, fieldHeight*4)];
+    [descriptionBackground setBackgroundColor:[UIColor colorWithRed:(107/255.0) green:(90/255.0) blue:(68/255.0) alpha:1.0]];
     [self.view addSubview:descriptionBackground];
     
-    UILabel *mailingLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, CGRectGetMaxY(areaImageView.frame) + 10.0, fieldWidth + 10.0, fieldHeight - 15.0)];
-    [mailingLabel setBackgroundColor:mediumBlue];
+    //    UILabel *mailingLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, CGRectGetMaxY(areaImageView.frame) + 10.0, fieldWidth + 10.0, fieldHeight - 15.0)];
+    UILabel *mailingLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, CGRectGetMaxY(areaImageView.frame) + 10.0, self.view.frame.size.width, fieldHeight - 15.0)];
+    [mailingLabel setBackgroundColor:[UIColor colorWithRed:(67/255.0) green:(40/255.0) blue:(18/255.0) alpha:1.0]];
     [mailingLabel setText:@"Mailing Address"];
-    [mailingLabel setTextColor:darkBrown];
+    [mailingLabel setTextColor:[UIColor whiteColor]];
     [mailingLabel setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:mailingLabel];
     
@@ -66,7 +87,8 @@
     [descriptionView setBackgroundColor:[UIColor clearColor]];
     [descriptionView setEditable:NO];
     [descriptionView setFont:[UIFont systemFontOfSize:16.0]];
-    [descriptionView setText:@"[Scout Name] - [Pack or Troop]\nGoshen Scout Reservation\n[Camp Name]\n340 Millard Burke Mem. Hwy.\nGoshen, VA 24439-2421"];
+    NSString *mailingAddressDescription = [NSString stringWithFormat:@"[Scout Name] - [Pack or Troop]\n%@\n[Camp Name]\n%@", [self.reservation objectForKey:@"name"], [self.reservation objectForKey:@"address"]];
+    [descriptionView setText:mailingAddressDescription];
     [descriptionBackground addSubview:descriptionView];
     
     y = CGRectGetMaxY(descriptionBackground.frame) + spacer;
@@ -94,22 +116,35 @@
     Class mapItemClass = [MKMapItem class];
     if (mapItemClass && [mapItemClass respondsToSelector:@selector(openMapsWithItems:launchOptions:)])
     {
-        // Create an MKMapItem to pass to the Maps app
-        CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(37.987073, -79.49782);
-        MKPlacemark *placemark = [[MKPlacemark alloc] initWithCoordinate:coordinate
-                                                       addressDictionary:nil];
-        MKMapItem *mapItem = [[MKMapItem alloc] initWithPlacemark:placemark];
-        [mapItem setName:@"Goshen Scout Reservation"];
-        
-        // Set the directions mode to "Walking"
-        // Can use MKLaunchOptionsDirectionsModeDriving instead
-        NSDictionary *launchOptions = @{MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving};
-        // Get the "Current User Location" MKMapItem
-        MKMapItem *currentLocationMapItem = [MKMapItem mapItemForCurrentLocation];
-        // Pass the current location and destination map items to the Maps app
-        // Set the direction mode in the launchOptions dictionary
-        [MKMapItem openMapsWithItems:@[currentLocationMapItem, mapItem]
-                       launchOptions:launchOptions];
+        @try
+        {
+            // Create an MKMapItem to pass to the Maps app
+            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake([[self.reservation objectForKey:@"latitude"] floatValue], [[self.reservation objectForKey:@"longitude"] floatValue]);
+            MKPlacemark *placemark = [[MKPlacemark alloc] initWithCoordinate:coordinate
+                                                           addressDictionary:nil];
+            MKMapItem *mapItem = [[MKMapItem alloc] initWithPlacemark:placemark];
+            [mapItem setName:[self.reservation objectForKey:@"name"]];
+            
+            // Set the directions mode to "Walking"
+            // Can use MKLaunchOptionsDirectionsModeDriving instead
+            NSDictionary *launchOptions = @{MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving};
+            // Get the "Current User Location" MKMapItem
+            MKMapItem *currentLocationMapItem = [MKMapItem mapItemForCurrentLocation];
+            // Pass the current location and destination map items to the Maps app
+            // Set the direction mode in the launchOptions dictionary
+            [MKMapItem openMapsWithItems:@[currentLocationMapItem, mapItem]
+                           launchOptions:launchOptions];
+        }@catch (NSException *exception) {
+            NSLog(@"Exception: %@", exception);
+        }
+        @finally {
+            UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Navigation Failure"
+                                                              message:@"Unable to navigate to the reservaitno a this time."
+                                                             delegate:nil
+                                                    cancelButtonTitle:@"Okay"
+                                                    otherButtonTitles:nil];
+            [message show];
+        }
     } else {
         
         /*********************************************************************************
@@ -140,35 +175,43 @@
     MKPointAnnotation *resAnnotation = [[MKPointAnnotation alloc] init];
     resAnnotation.title = [self.reservation objectForKey:@"name"];
     
-    CLLocationCoordinate2D resLocation = CLLocationCoordinate2DMake([[self.reservation objectForKey:@"latitude"] floatValue], [[self.reservation objectForKey:@"longitude"] floatValue]);
-    resAnnotation.coordinate = resLocation;
-    
-    [self.mapView addAnnotation:resAnnotation];
-    
-    // CHOOSE FROM BELOW WHAT TO ZOOM TO
-    
-    MKMapRect flyTo = MKMapRectNull;
-
-    for (id <MKAnnotation> annotation in self.mapView.annotations) {
-        MKMapPoint annotationPoint = MKMapPointForCoordinate(annotation.coordinate);
-        MKMapRect pointRect = MKMapRectMake(annotationPoint.x, annotationPoint.y, 0, 0);
-        if (MKMapRectIsNull(flyTo)) {
-            flyTo = pointRect;
-        } else {
-            flyTo = MKMapRectUnion(flyTo, pointRect);
+    @try
+    {
+        CLLocationCoordinate2D resLocation = CLLocationCoordinate2DMake([[self.reservation objectForKey:@"latitude"] floatValue], [[self.reservation objectForKey:@"longitude"] floatValue]);
+        resAnnotation.coordinate = resLocation;
+        
+        [self.mapView addAnnotation:resAnnotation];
+        
+        // CHOOSE FROM BELOW WHAT TO ZOOM TO
+        
+        MKMapRect flyTo = MKMapRectNull;
+        
+        for (id <MKAnnotation> annotation in self.mapView.annotations) {
+            MKMapPoint annotationPoint = MKMapPointForCoordinate(annotation.coordinate);
+            MKMapRect pointRect = MKMapRectMake(annotationPoint.x, annotationPoint.y, 0, 0);
+            if (MKMapRectIsNull(flyTo)) {
+                flyTo = pointRect;
+            } else {
+                flyTo = MKMapRectUnion(flyTo, pointRect);
+            }
         }
+        
+        // Position the map so that all overlays and annotations are visible on screen.
+        self.mapView.visibleMapRect = flyTo;
+        
+        //    MKCoordinateRegion mapRegion;
+        //    mapRegion.center.latitude = self.mapView.userLocation.coordinate.latitude;
+        //    mapRegion.center.longitude = self.mapView.userLocation.coordinate.longitude;
+        //    mapRegion.center = self.mapView.userLocation.coordinate;
+        //    mapRegion.span.latitudeDelta = 0.01;
+        //    mapRegion.span.longitudeDelta = 0.01;
+        //    [self.mapView setRegion:mapRegion animated: YES];
     }
-
-    // Position the map so that all overlays and annotations are visible on screen.
-    self.mapView.visibleMapRect = flyTo;
-    
-//    MKCoordinateRegion mapRegion;
-    //    mapRegion.center.latitude = self.mapView.userLocation.coordinate.latitude;
-    //    mapRegion.center.longitude = self.mapView.userLocation.coordinate.longitude;
-//    mapRegion.center = self.mapView.userLocation.coordinate;
-//    mapRegion.span.latitudeDelta = 0.01;
-//    mapRegion.span.longitudeDelta = 0.01;
-//    [self.mapView setRegion:mapRegion animated: YES];
+    @catch (NSException *exception) {
+        NSLog(@"Exception: %@", exception);
+    }
+    @finally {
+    }
 }
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation

@@ -79,7 +79,9 @@
     
     NSDictionary *staff = [self.staff objectAtIndex:[indexPath section]];
     cell.textLabel.text = [staff objectForKey:@"name"];
-    cell.detailTextLabel.text = [staff objectForKey:@"area"];
+    NSLog(@"staff: %@", staff);
+    NSString *detailString = [NSString stringWithFormat:@"%@ - %@", [staff objectForKey:@"area"], [staff objectForKey:@"rank"]];
+    cell.detailTextLabel.text = detailString;
     [cell setCellImage:[NSURLRequest requestWithURL:[NSURL URLWithString:[staff objectForKey:@"icon"]]]];
     
     return cell;

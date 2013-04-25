@@ -8,6 +8,7 @@
 
 #import "MeritBadgeSelectionViewController.h"
 #import "MeritBadgeDetailsViewController.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface MeritBadgeSelectionViewController ()
 @property (nonatomic) int areaId;
@@ -80,7 +81,8 @@
     NSDictionary *badge = [self.badges objectAtIndex:[indexPath section]];
     cell.textLabel.text = [badge objectForKey:@"name"];
     cell.detailTextLabel.text = [badge objectForKey:@"area"];
-    [cell setCellImage:[NSURLRequest requestWithURL:[NSURL URLWithString:[badge objectForKey:@"icon"]]]];
+//    [cell.imageView setImageWithURL:[NSURL URLWithString:[badge objectForKey:@"thumbnail"]]];
+    [cell setCellImage:[NSURLRequest requestWithURL:[NSURL URLWithString:[badge objectForKey:@"thumbnail"]]]];
     
     return cell;
 }

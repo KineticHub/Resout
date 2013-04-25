@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "QBFlatButton.h"
 
 @interface MeritBadgeRequirementCell : UITableViewCell
-
+@property (nonatomic, strong) QBFlatButton *showSubsButton;
+-(void)shouldShowSubrequirementsButton:(bool)show;
+-(void)showHideText:(bool)hideText;
 @end

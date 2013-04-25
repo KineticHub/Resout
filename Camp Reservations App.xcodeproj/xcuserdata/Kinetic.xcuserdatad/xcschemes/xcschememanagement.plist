@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Camp Reservations App copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>Camp Reservations App.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -12,6 +17,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>9C2567D21725182F00BB7564</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>9C7AFBE616F8CD670010BA43</key>
 		<dict>
 			<key>primary</key>

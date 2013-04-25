@@ -10,6 +10,7 @@
 
 #import "ContactDetailsViewController.h"
 #import "QBFlatButton.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface ContactDetailsViewController ()
 @property (nonatomic, strong) NSDictionary *contact;
@@ -52,6 +53,8 @@
     [profilePicView.layer setMasksToBounds:YES];
     [profilePicView setCenter:CGPointMake(self.view.frame.size.width/2, profilePicView.center.y)];
     [self.view addSubview:profilePicView];
+    
+    [profilePicView setImageWithURL:[NSURL URLWithString:[self.contact objectForKey:@"thumbnail"]] placeholderImage:[UIImage imageNamed:@"scouting_symbol.jpg"]];
     
     y += profilePicView.frame.size.height + spacer;
     

@@ -58,7 +58,7 @@
                                                     [MBProgressHUD hideHUDForView:selfView animated:YES];
                                                 });
                                                 UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Image Failed"
-                                                                                                  message:@"The image failed to load! Sorry :("
+                                                                                                  message:@"The image failed to load."
                                                                                                  delegate:selfVC
                                                                                         cancelButtonTitle:@"Okay"
                                                                                         otherButtonTitles:nil];

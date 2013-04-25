@@ -7,6 +7,8 @@
 #import "DetailViewController.h"
 #import "Tweet.h"
 #import "TwitterFeedCell.h"
+#import "DETweetComposeViewController.h"
+#import "AppDelegate.h"
 
 @implementation TwitterFeed
 
@@ -30,6 +32,25 @@
 		[twitterEngine getUserTimelineFor:[twitterEngine username] sinceID:0 startingAtPage:0 count:NSIntegerMax];
     }
     return self;
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    // Instantiate a Save button to invoke the saveTask: method when tapped
+    UIBarButtonItem *postButton = [[UIBarButtonItem alloc] initWithTitle:@"TWEET US" style:UIBarButtonItemStyleDone target:self action:@selector(showTwitterTweetComposer)];
+    
+    AppDelegate *appDel = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    appDel.rootNavigationItem.rightBarButtonItem = postButton;
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    AppDelegate *appDel = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    appDel.rootNavigationItem.rightBarButtonItem = nil;
 }
 
 #pragma mark -
@@ -76,6 +97,8 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     DetailViewController *detailViewController = [[DetailViewController alloc] init];
 	
 	Tweet *tweet = [[self tweets] objectAtIndex:[indexPath row]];
@@ -135,13 +158,14 @@
 }
 
 #pragma mark -
-#pragma mark Memory management
-
-- (void)dealloc {
-	[twitterEngine release];
-	[tweets release];
-	
-    [super dealloc];
+#pragma mark Twitter Compose
+-(void)showTwitterTweetComposer
+{
+    DETweetComposeViewController *tcvc = [[DETweetComposeViewController alloc] init];
+    [tcvc setInitialText:@"#goshenscouting"];
+    [tcvc addImage:[UIImage imageNamed:@"unchecked_box"]];
+    self.modalPresentationStyle = UIModalPresentationCurrentContext;
+    [self presentViewController:tcvc animated:YES completion:^{}];
 }
 
 @end

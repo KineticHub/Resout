@@ -26,11 +26,8 @@
 
 #import "OAHMAC_SHA1SignatureProvider.h"
 
-// #include "hmac.h"
+#include "hmac.h"
 #include "Base64Transcoder.h"
-
-#import <CommonCrypto/CommonDigest.h>
-#import <CommonCrypto/CommonHMAC.h>
 
 @implementation OAHMAC_SHA1SignatureProvider
 
@@ -41,12 +38,9 @@
 - (NSString *)signClearText:(NSString *)text withSecret:(NSString *)secret {
     NSData *secretData = [secret dataUsingEncoding:NSUTF8StringEncoding];
     NSData *clearTextData = [text dataUsingEncoding:NSUTF8StringEncoding];
-    unsigned char result[CC_SHA1_DIGEST_LENGTH];
-
-//    hmac_sha1((unsigned char *)[clearTextData bytes], [clearTextData length], (unsigned char *)[secretData bytes], [secretData length], result);
-	
-	CCHmac(kCCHmacAlgSHA1, (const void *)[secretData bytes], [secretData length], (const void *)[clearTextData bytes], [clearTextData length], result);
-
+    unsigned char result[20];
+    hmac_sha1((unsigned char *)[clearTextData bytes], [clearTextData length], (unsigned char *)[secretData bytes], [secretData length], result);
+    
     //Base64 Encoding
     
     char base64Result[32];

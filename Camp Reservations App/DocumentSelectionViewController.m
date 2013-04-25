@@ -146,7 +146,7 @@
     }
     else {
         UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Document Failed"
-                                                          message:@"The document failed to load! Sorry :("
+                                                          message:@"The document failed to load."
                                                          delegate:nil
                                                 cancelButtonTitle:@"Okay"
                                                 otherButtonTitles:nil];

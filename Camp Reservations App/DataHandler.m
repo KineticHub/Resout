@@ -179,6 +179,8 @@ static id _instance;
             [tempDict setObject:[member objectForKey:@"pk"] forKey:@"id"];
             [tempDict setObject:[[[[member objectForKey:@"fields"] objectForKey:@"area"] objectForKey:@"fields"] objectForKey:@"name"] forKey:@"area"];
             [tempDict setObject:[[[member objectForKey:@"fields"] objectForKey:@"area"] objectForKey:@"pk"] forKey:@"area_id"];
+            [tempDict setObject:[[[[member objectForKey:@"fields"] objectForKey:@"rank"] objectForKey:@"fields"] objectForKey:@"name"] forKey:@"rank"];
+            [tempDict setObject:[[[[member objectForKey:@"fields"] objectForKey:@"rank"] objectForKey:@"fields"] objectForKey:@"order"] forKey:@"order"];
             [staff addObject:tempDict];
         }
         NSLog(@"staff: %@", staff);

@@ -35,7 +35,7 @@
         [cellBackgroundViewImageView.layer setBorderColor:[[UIColor colorWithRed:(31/255.0) green:(31/255.0) blue:(31/255.0) alpha:1.0] CGColor]];
         [cellBackgroundViewImageView.layer setBorderWidth:1.0];
         [cellBackgroundViewImageView setBackgroundColor:[UIColor whiteColor]];
-        [cellBackgroundViewImageView setAlpha:0.5];
+        [cellBackgroundViewImageView setAlpha:0.7];
 //        [cellBackgroundViewImageView setBackgroundColor:[UIColor colorWithRed:(26/255.0) green:(26/255.0) blue:(26/255.0) alpha:1.0]];
         [self setBackgroundView:cellBackgroundViewImageView];
 //        [self setBackgroundColor:[UIColor colorWithRed:(26/255.0) green:(26/255.0) blue:(26/255.0) alpha:1.0]];
@@ -63,11 +63,11 @@
         [self.detailTextLabel setAlpha:0.9];
         
         self.cellImageBox = [[UIView alloc] initWithFrame:CGRectMake(self.contentView.frame.origin.x + 10.0, 20.0, self.frame.size.height + 20.0, self.frame.size.height - 30.0)];
-        [self.cellImageBox setBackgroundColor:[UIColor whiteColor]];
+//        [self.cellImageBox setBackgroundColor:[UIColor whiteColor]];
 //        [self.cellImageBox.layer setBorderColor:[[UIColor colorWithRed:(181/255.0) green:(163/255.0) blue:(28/255.0) alpha:1.0] CGColor]];
 //        [self.cellImageBox.layer setBorderColor:[[UIColor colorWithRed:(205/255.0) green:(205/255.0) blue:(205/255.0) alpha:1.0] CGColor]];
-        [self.cellImageBox.layer setBorderColor:[[UIColor colorWithRed:(59/255.0) green:(149/255.0) blue:(154/255.0) alpha:1.0] CGColor]];
-        [self.cellImageBox.layer setBorderWidth:3.0];
+//        [self.cellImageBox.layer setBorderColor:[[UIColor colorWithRed:(59/255.0) green:(149/255.0) blue:(154/255.0) alpha:1.0] CGColor]];
+//        [self.cellImageBox.layer setBorderWidth:3.0];
         [self.cellImageBox.layer setCornerRadius:20.0];
         [self.cellImageBox.layer setMasksToBounds:YES];
 //        [self.cellImageBox setAlpha:0.8];
@@ -102,6 +102,7 @@
     CGFloat spacer = 15.0;
 //    [self.cellImageBox setFrame:CGRectMake(self.contentView.frame.origin.x + 10.0, 15.0, self.frame.size.height - 5.0, self.frame.size.height - 30.0)];
     [self.cellImageBox setFrame:CGRectMake(self.contentView.frame.origin.x + 10.0, 10.0, self.frame.size.height - 30.0, self.frame.size.height - 30.0)];
+    [self.cellImageBox setCenter:CGPointMake(self.cellImageBox.center.x, self.contentView.frame.size.height/2)];
     [self.cellImageView setFrame:CGRectMake(0.0, 0.0, self.cellImageBox.frame.size.width - 10.0, self.cellImageBox.frame.size.height - 10.0)];
     self.cellImageView.center = CGPointMake(self.cellImageBox.frame.size.width/2, self.cellImageBox.frame.size.height/2);
 //    [self.seperatorLine setFrame:CGRectMake(0.0, -1.0, self.frame.size.width, 1.0)];
@@ -111,27 +112,27 @@
         [self.cellImageBox setHidden:YES];
         
         CGRect textLabelRect = self.textLabel.frame;
-        textLabelRect.origin.x = spacer;
-        textLabelRect.origin.y = self.cellImageBox.frame.origin.y + 8.0;
+        textLabelRect.origin.x = round(spacer);
+        textLabelRect.origin.y = round(self.cellImageBox.frame.origin.y + 8.0);
         [self.textLabel setFrame:textLabelRect];
         
         CGRect detailLabelRect = self.detailTextLabel.frame;
-        detailLabelRect.origin.x = textLabelRect.origin.x;
-        detailLabelRect.origin.y = textLabelRect.size.height + textLabelRect.origin.y + 5.0;
+        detailLabelRect.origin.x = round(textLabelRect.origin.x);
+        detailLabelRect.origin.y = round(textLabelRect.size.height + textLabelRect.origin.y + 5.0);
         [self.detailTextLabel setFrame:detailLabelRect];
         
     } else {
         [self.cellImageView setHidden:NO];
-        [self.cellImageBox setHidden:YES];
+        [self.cellImageBox setHidden:NO];
         
         CGRect textLabelRect = self.textLabel.frame;
-        textLabelRect.origin.x = CGRectGetMaxX(self.cellImageBox.frame) + spacer;
-        textLabelRect.origin.y = self.cellImageBox.frame.origin.y + 8.0;
+        textLabelRect.origin.x = round(CGRectGetMaxX(self.cellImageBox.frame) + spacer);
+        textLabelRect.origin.y = round(self.cellImageBox.frame.origin.y);
         [self.textLabel setFrame:textLabelRect];
         
         CGRect detailLabelRect = self.detailTextLabel.frame;
-        detailLabelRect.origin.x = textLabelRect.origin.x;
-        detailLabelRect.origin.y = textLabelRect.size.height + textLabelRect.origin.y + 5.0;
+        detailLabelRect.origin.x = round(textLabelRect.origin.x);
+        detailLabelRect.origin.y = round(textLabelRect.size.height + textLabelRect.origin.y + 5.0);
         [self.detailTextLabel setFrame:detailLabelRect];
     }
     
@@ -154,12 +155,14 @@
 //    __block CGPoint originalContentViewCenter = self.contentView.center;
     __block BasicCell *pointerCell = self;
     
+//    [self.cellImageView setImageWithURL:[imageURLRequest URL]];
+    
     [self.cellImageView setImageWithURLRequest:imageURLRequest placeholderImage:[UIImage imageNamed:@"blank_square"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
         
         imageViewPointer.image = image;
         
-//        const float colorMasking[6] = {222, 255, 222, 255, 222, 255};
-//        imageViewPointer.image = [UIImage imageWithCGImage: CGImageCreateWithMaskingColors(imageViewPointer.image.CGImage, colorMasking)];
+        const float colorMasking[6] = {222, 255, 222, 255, 222, 255};
+        imageViewPointer.image = [UIImage imageWithCGImage: CGImageCreateWithMaskingColors(imageViewPointer.image.CGImage, colorMasking)];
         
         [imageViewPointer setHidden:NO];
 //        imageViewPointer.frame = CGRectMake(originalContentViewFrame.origin.x, originalImageFrame.origin.y, 45, 45);

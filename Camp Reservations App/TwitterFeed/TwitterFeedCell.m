@@ -50,7 +50,8 @@
     return self;
 }
 
-- (void)layoutSubviews {
+- (void)layoutSubviews
+{
 	[super layoutSubviews];
 	
 	CGRect rect = [[self imageView] frame];

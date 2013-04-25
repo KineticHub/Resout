@@ -129,6 +129,10 @@
 	if (height == 18.0) {
 		height += 5.0;
 	}
+    
+    if (indexPath.row == 0 && [[[self.requirements objectAtIndex:indexPath.section] objectForKey:@"subrequirements"] count] > 0) {
+        height += 40.0;
+    }
 	
 	return 5.0 + 22.0 + height + 5.0;
 }
@@ -176,14 +180,22 @@
     
 	if (cell == nil) {
 		cell = [[MeritBadgeRequirementCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"CellIdentifier"];
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
 	}
     
     if (indexPath.row != 0) {
-        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         [cell setUserInteractionEnabled:NO];
     } else {
-        [cell setSelectionStyle:UITableViewCellSelectionStyleGray];
+        
         [cell setUserInteractionEnabled:YES];
+    }
+    
+    if (indexPath.row == 0 && [[[self.requirements objectAtIndex:indexPath.section] objectForKey:@"subrequirements"] count] > 0)
+    {
+        [cell shouldShowSubrequirementsButton:YES];
+        [cell.showSubsButton addTarget:self action:@selector(expandRequirements:) forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        [cell shouldShowSubrequirementsButton:NO];
     }
     
     bool is_expanded = NO;
@@ -252,12 +264,39 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+//    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+//    
+//    bool found = NO;
+//    for (NSNumber *req in self.expanded_requirements)
+//    {
+//        if ([req intValue] == indexPath.section) {
+//            [self.expanded_requirements removeObject:req];
+//            found = YES;
+//            [self.tableView reloadData];
+//            break;
+//        }
+//    }
+//    
+//    if (!found)
+//    {
+//        [self.expanded_requirements addObject:[NSNumber numberWithInt:indexPath.section]];
+//        [self.tableView reloadData];
+//    }
+}
+
+- (void)expandRequirements:(id)sender
+{
+    UIButton *button = (UIButton *)sender;
+    MeritBadgeRequirementCell *cell = (MeritBadgeRequirementCell *)button.superview;
+    UITableView *tableView = (UITableView *)cell.superview;
+    NSIndexPath *indexPath = [tableView indexPathForCell:cell];
     
     bool found = NO;
     for (NSNumber *req in self.expanded_requirements)
     {
-        if ([req intValue] == indexPath.section) {
+        if ([req intValue] == indexPath.section)
+        {
+            [cell showHideText:NO];
             [self.expanded_requirements removeObject:req];
             found = YES;
             [self.tableView reloadData];
@@ -267,6 +306,7 @@
     
     if (!found)
     {
+        [cell showHideText:YES];
         [self.expanded_requirements addObject:[NSNumber numberWithInt:indexPath.section]];
         [self.tableView reloadData];
     }

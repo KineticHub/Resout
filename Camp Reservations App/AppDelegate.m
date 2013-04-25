@@ -19,9 +19,9 @@
 #import "ReservationInfoViewController.h"
 
 @interface AppDelegate ()
+@property (nonatomic, strong) UINavigationController *rootNavigationController;
 @property (nonatomic, strong) UIBarButtonItem *menuButton;
 @property (nonatomic, strong) PKRevealController *revealController;
-@property (nonatomic, strong) UINavigationController *rootNavigationController;
 @end
 
 @implementation AppDelegate
@@ -45,6 +45,7 @@
     MainMenuViewController *mainMenuVC = [[MainMenuViewController alloc] init];
     self.revealController = [PKRevealController revealControllerWithFrontViewController:basicSelectVC leftViewController:mainMenuVC options:nil];
     self.revealController.navigationItem.leftBarButtonItem = self.menuButton;
+    self.rootNavigationItem = self.revealController.navigationItem;
     
     self.rootNavigationController = [[UINavigationController alloc] initWithRootViewController:self.revealController];
     [self.rootNavigationController.navigationBar setTintColor:darkBrown];
